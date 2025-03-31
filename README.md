@@ -1,66 +1,52 @@
-# NFT-Backed Collateral Contract
+# Registration Smart Contract
 
 ## Overview
-The **NFT-Backed Collateral Contract** allows users to deposit NFTs as collateral to receive loans in STX tokens. Users can repay their loans to reclaim their NFTs, while the contract owner has the authority to liquidate overdue loans and seize collateralized NFTs.
+The `registration` smart contract enables users to register, update their profiles, receive reviews, and verify their skills. It also allows the contract owner to assign skill verifiers who can confirm users' claimed skills.
 
 ## Features
-- **Deposit NFT as Collateral**: Users can lock an NFT in the contract to receive a loan.
-- **Loan Repayment & Collateral Retrieval**: Borrowers can repay their loans to retrieve their NFTs.
-- **Loan Liquidation**: The contract owner can liquidate overdue loans, seizing the NFT.
-- **Read-Only Queries**: Users can check loan details and whether an NFT is collateralized.
+- **User Registration:** Allows users to create a profile with a name, skills, and portfolio.
+- **Profile Update:** Users can modify their profile details.
+- **Reviews & Ratings:** Other users can review and rate registered users.
+- **Skill Verification:** Verifiers can confirm users' skills, improving trust.
+- **Skill Verifier Management:** The contract owner can assign verifiers for specific skills.
+- **Read-Only Functions:** Retrieve user profiles and skill verifiers.
 
-## Contract Details
-
-### Constants
-- `contract-owner`: The owner of the contract (deployer).
-- `err-not-owner (u100)`: Error when a non-owner attempts an unauthorized action.
-- `err-already-collateralized (u101)`: Error when trying to collateralize an NFT that is already locked.
-- `err-no-active-loan (u102)`: Error when trying to access a non-existent or settled loan.
-- `err-insufficient-repayment (u103)`: Error when repayment amount is insufficient.
-
-### Data Variables
-- `next-loan-id`: Tracks the next available loan ID.
-
-### Data Maps
-- `loans`: Stores active loan details, indexed by loan ID.
-- `collateralized-nfts`: Tracks collateralized NFTs, mapping NFT IDs to loan IDs.
-
-### Token Definitions
-- `collateral-nft`: A non-fungible token (NFT) that can be used as collateral.
+## Data Structures
+- **Users (`users` map):** Stores user profiles including name, skills, portfolio, reviews, and verified skills.
+- **Skill Verifiers (`skill-verifiers` map):** Stores lists of verifiers for each skill.
 
 ## Public Functions
+### `register-user(name)`
+Registers a new user with the given name.
 
-### `deposit-collateral-and-borrow(nft-id, loan-amount, repayment-amount, duration)`
-- Locks an NFT as collateral.
-- Issues a loan in STX tokens.
-- Requires transfer of NFT to contract.
-- Returns the assigned `loan-id`.
+### `update-profile(name, skills, portfolio)`
+Allows a user to update their profile information.
 
-### `repay-loan-and-retrieve-collateral(loan-id)`
-- Allows the borrower to repay the loan amount.
-- Transfers the NFT back to the borrower.
-- Deletes loan record upon successful repayment.
+### `add-review(user, rating, comment)`
+Adds a review for a specified user with a rating and comment.
 
-### `liquidate-overdue-loan(loan-id)`
-- Allows the contract owner to liquidate overdue loans.
-- Transfers the NFT to the contract owner upon liquidation.
+### `verify-skill(user, skill)`
+Allows an authorized verifier to verify a user's skill.
+
+### `add-skill-verifier(skill, verifier)`
+Only the contract owner can add a verifier for a specific skill.
 
 ## Read-Only Functions
+### `get-user-profile(user)`
+Retrieves the profile details of a given user.
 
-### `get-loan-details(loan-id)`
-- Returns details of a loan if it exists.
+### `get-skill-verifiers(skill)`
+Returns the list of verifiers assigned to a given skill.
 
-### `is-nft-collateralized(nft-id)`
-- Returns `true` if the NFT is locked as collateral, otherwise `false`.
+## Error Handling
+- `u100`: Not authorized.
+- `u101`: User already registered.
+- `u102`: User not found.
+- `u103`: Maximum reviews reached.
+- `u104`: Maximum verified skills reached.
+- `u105`: Maximum verifiers reached.
 
-## Security Considerations
-- Only the contract owner can liquidate overdue loans.
-- Loans are linked to block height to determine expiration.
-- Users must approve NFT transfers to the contract.
+## Access Control
+- Only the contract owner can assign skill verifiers.
+- Only designated verifiers can verify a user’s skill.
 
-## Future Enhancements
-- Support for multiple collateral types.
-- Dynamic interest rates.
-- Auction mechanism for liquidated NFTs.
-
-This contract provides a decentralized way to leverage NFTs for liquidity while ensuring secure and fair handling of assets.
