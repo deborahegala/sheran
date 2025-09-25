@@ -35,6 +35,11 @@ path = 'contracts/inventory_with_delegated_updates.clar'
 clarity_version = 2
 epoch = 2.5
 
+[contracts.multi_send_with_failure_handling]
+path = 'contracts/multi_send_with_failure_handling.clar'
+clarity_version = 2
+epoch = 2.5
+
 [contracts.reputation-based]
 path = 'contracts/reputation-based.clar'
 clarity_version = 2
